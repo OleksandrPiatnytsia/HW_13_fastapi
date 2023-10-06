@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "hw-13-fastapi"
+version = "0.1.0"
+description = ""
+authors = ["Oleksandr <115171014+OleksandrPiatnytsia@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+sqlalchemy = "^2.0.20"
+fastapi = {extras = ["all"], version = "^0.101.1"}
+psycopg2 = "^2.9.7"
+alembic = "^1.11.3"
+libgravatar = "^1.0.4"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+bcrypt = "^4.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
