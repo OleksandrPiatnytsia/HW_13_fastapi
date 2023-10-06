@@ -4,9 +4,8 @@ from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
 from fastapi_mail.errors import ConnectionErrors
 from pydantic import EmailStr
 
-from src.services.auth import auth_service
-
 from src.database.db import email_password, email_sender
+from src.services.auth import auth_service
 
 conf = ConnectionConfig(
     MAIL_USERNAME=email_sender,
@@ -23,7 +22,19 @@ conf = ConnectionConfig(
 )
 
 
-async def send_email(email: EmailStr, username: str, host: str):
+def simple_send(email: EmailStr):
+    message = MessageSchema(
+        subject="Fastapi-Mail test",
+        recipients=[email],
+        body="Test fast api mail",
+        subtype=MessageType.plain)
+
+    fm = FastMail(conf)
+    await fm.send_message(message)
+    return JSONResponse(status_code=200, content={"message": "email has been sent"})
+
+
+def send_email(email: EmailStr, username: str, host: str):
     try:
         token_verification = auth_service.create_email_token({"sub": email})
         message = MessageSchema(
