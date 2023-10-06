@@ -18,6 +18,9 @@ database = config.get('DB', 'DB_NAME')
 secret_key = config.get('AUTH', 'SECRET_KEY')
 algorithm = config.get('AUTH', 'ALGORITHM')
 
+email_password = config.get('EMAIL_DATA', 'PASSWORD')
+email_sender = config.get('EMAIL_DATA', 'EMAIL')
+
 URI = f"postgresql://{username}:{password}@{domain}:{port}/{database}"
 print(URI)
 

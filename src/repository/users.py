@@ -2,14 +2,9 @@ import logging
 
 from libgravatar import Gravatar
 from sqlalchemy import select
-from sqlalchemy.orm import Session
-
-from src.database.db import get_db
 
 from src.database.models import User
 from src.schemas import UserSchema
-
-from fastapi import Depends
 
 
 def get_user_by_email(email: str, session) -> User:
@@ -38,3 +33,9 @@ def create_user(body: UserSchema, session) -> User:
 def update_token(user: User, token: str | None, session) -> None:
     user.refresh_token = token
     session.commit()
+
+
+def confirmed_email(email: str, session) -> None:
+    user = get_user_by_email(email, session)
+    user.confirmed = True
+    await session.commit()
