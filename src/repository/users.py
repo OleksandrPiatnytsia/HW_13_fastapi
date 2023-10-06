@@ -38,4 +38,4 @@ def update_token(user: User, token: str | None, session) -> None:
 def confirmed_email(email: str, session) -> None:
     user = get_user_by_email(email, session)
     user.confirmed = True
-    await session.commit()
+    session.commit()

@@ -1,24 +1,31 @@
-from fastapi import APIRouter, HTTPException, Depends, status, Security
+from fastapi import APIRouter, HTTPException, Depends, status, Security, Request, BackgroundTasks
 from fastapi.security import OAuth2PasswordRequestForm, HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 from src.database.db import get_db
-from src.schemas import UserSchema, UserResponseSchema, TokenModel
 from src.repository import users as repository_users
+from src.schemas import UserSchema, UserResponseSchema, TokenModel, MailSchema
 from src.services.auth import auth_service
+from src.services.email import send_email, simple_send_mail
 
 router = APIRouter(prefix='/auth', tags=["auth"])
 security = HTTPBearer()
 
 
+@router.post("/send_mail_test", status_code=status.HTTP_201_CREATED)
+def send_mail_test(body: MailSchema, background_tasks: BackgroundTasks):
+    background_tasks.add_task(simple_send_mail, body.email)
+
+
 @router.post("/signup", response_model=UserResponseSchema, status_code=status.HTTP_201_CREATED)
-def signup(body: UserSchema, session: Session = Depends(get_db)):
+def signup(body: UserSchema, background_tasks: BackgroundTasks, request: Request, session: Session = Depends(get_db)):
     exist_user = repository_users.get_user_by_email(body.email, session)
     if exist_user:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Account already exists")
     body.password = auth_service.get_password_hash(body.password)
     new_user = repository_users.create_user(body, session)
+    background_tasks.add_task(send_email, new_user.email, new_user.username, str(request.base_url))
     return new_user
 
 
@@ -27,6 +34,8 @@ def login(body: OAuth2PasswordRequestForm = Depends(), session: AsyncSession = D
     user = repository_users.get_user_by_email(body.username, session)
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email")
+    if not user.confirmed:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Email not confirmed")
     if not auth_service.verify_password(body.password, user.password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid password")
 
@@ -56,12 +65,12 @@ def refresh_token(credentials: HTTPAuthorizationCredentials = Security(security)
 
 
 @router.get('/confirmed_email/{token}')
-async def confirmed_email(token: str, session: Session = Depends(get_db)):
+def confirmed_email(token: str, session: Session = Depends(get_db)):
     email = auth_service.get_email_from_token(token)
     user = repository_users.get_user_by_email(email, session)
     if user is None:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Verification error")
     if user.confirmed:
         return {"message": "Your email is already confirmed"}
-    await repository_users.confirmed_email(email, session)
+    repository_users.confirmed_email(email, session)
     return {"message": "Email confirmed"}

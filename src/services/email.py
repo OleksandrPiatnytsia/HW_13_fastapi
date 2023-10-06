@@ -22,7 +22,7 @@ conf = ConnectionConfig(
 )
 
 
-def simple_send(email: EmailStr):
+async def simple_send_mail(email: EmailStr):
     message = MessageSchema(
         subject="Fastapi-Mail test",
         recipients=[email],
@@ -31,10 +31,9 @@ def simple_send(email: EmailStr):
 
     fm = FastMail(conf)
     await fm.send_message(message)
-    return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
 
-def send_email(email: EmailStr, username: str, host: str):
+async def send_email(email: EmailStr, username: str, host: str):
     try:
         token_verification = auth_service.create_email_token({"sub": email})
         message = MessageSchema(
@@ -46,5 +45,6 @@ def send_email(email: EmailStr, username: str, host: str):
 
         fm = FastMail(conf)
         await fm.send_message(message, template_name="email_template.html")
+        print(f"mail sended to email: {email}")
     except ConnectionErrors as err:
         print(err)
