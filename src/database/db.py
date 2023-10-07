@@ -1,27 +1,9 @@
-import configparser
-import pathlib
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-# URI:  postgresql://username:password@domain:port/database
-file_config = pathlib.Path(__file__).parent.parent.joinpath('config/config.ini')
-config = configparser.ConfigParser()
-config.read(file_config)
+from src.conf.config import config
 
-username = config.get('DB', 'USER')
-password = config.get('DB', 'PASSWORD')
-domain = config.get('DB', 'DOMAIN')
-port = config.get('DB', 'PORT')
-database = config.get('DB', 'DB_NAME')
-
-secret_key = config.get('AUTH', 'SECRET_KEY')
-algorithm = config.get('AUTH', 'ALGORITHM')
-
-email_password = config.get('EMAIL_DATA', 'PASSWORD')
-email_sender = config.get('EMAIL_DATA', 'EMAIL')
-
-URI = f"postgresql://{username}:{password}@{domain}:{port}/{database}"
+URI = config.sqlalchemy_database_url
 print(URI)
 
 engine = create_engine(URI, echo=False, pool_size=5, max_overflow=0)

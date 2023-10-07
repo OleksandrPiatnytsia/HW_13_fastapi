@@ -15,7 +15,7 @@ security = HTTPBearer()
 
 @router.post("/send_mail_test", status_code=status.HTTP_201_CREATED)
 def send_mail_test(body: MailSchema, background_tasks: BackgroundTasks):
-    background_tasks.add_task(simple_send_mail, body.email)
+    background_tasks.add_task(simple_send_mail, body.email, body.email_text)
 
 
 @router.post("/signup", response_model=UserResponseSchema, status_code=status.HTTP_201_CREATED)

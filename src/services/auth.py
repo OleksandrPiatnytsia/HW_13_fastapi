@@ -8,14 +8,14 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
 from src.database.db import get_db
-from src.database.db import secret_key, algorithm
+from src.conf.config import config
 from src.repository import users as repository_users
 
 
 class Auth:
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-    SECRET_KEY = secret_key
-    ALGORITHM = algorithm
+    SECRET_KEY = config.secret_key
+    ALGORITHM = config.algorithm
     oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
     def verify_password(self, plain_password, hashed_password):

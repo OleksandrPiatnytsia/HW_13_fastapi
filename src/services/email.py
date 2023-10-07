@@ -4,16 +4,16 @@ from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
 from fastapi_mail.errors import ConnectionErrors
 from pydantic import EmailStr
 
-from src.database.db import email_password, email_sender
+from src.conf.config import config
 from src.services.auth import auth_service
 
 conf = ConnectionConfig(
-    MAIL_USERNAME=email_sender,
-    MAIL_PASSWORD=email_password,
-    MAIL_FROM=email_sender,
-    MAIL_PORT=465,
-    MAIL_SERVER="smtp.meta.ua",
-    MAIL_FROM_NAME="Desired Name",
+    MAIL_USERNAME=config.mail_username,
+    MAIL_PASSWORD=config.mail_password,
+    MAIL_FROM=config.mail_username,
+    MAIL_PORT=config.mail_port,
+    MAIL_SERVER=config.mail_server,
+    MAIL_FROM_NAME=config.mail_sender_name,
     MAIL_STARTTLS=False,
     MAIL_SSL_TLS=True,
     USE_CREDENTIALS=True,
@@ -22,11 +22,12 @@ conf = ConnectionConfig(
 )
 
 
-async def simple_send_mail(email: EmailStr):
+async def simple_send_mail(email: EmailStr, email_text:str) -> object:
     message = MessageSchema(
         subject="Fastapi-Mail test",
         recipients=[email],
-        body="Test fast api mail",
+        # body="Test fast api mail",
+        body =email_text,
         subtype=MessageType.plain)
 
     fm = FastMail(conf)

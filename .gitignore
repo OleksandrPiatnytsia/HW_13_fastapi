@@ -1,3 +1,4 @@
 src/config/config.ini
 bedug.py
 poetry.lock
+.env
