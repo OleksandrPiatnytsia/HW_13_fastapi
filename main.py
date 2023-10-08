@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from starlette.middleware.cors import CORSMiddleware
 
 from src.database.db import get_db
-from src.routes import contacts, auth
+from src.routes import contacts, auth, users
 from src.conf.config import config
 
 app = FastAPI()
@@ -29,6 +29,7 @@ async def startup():
 app.include_router(auth.router)
 app.include_router(contacts.router)
 app.include_router(contacts.birthday_router)
+app.include_router(users.router)
 
 
 @app.get("/")
