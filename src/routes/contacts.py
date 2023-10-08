@@ -1,16 +1,14 @@
 from typing import List
 
-from fastapi_limiter.depends import RateLimiter
 from fastapi import Depends, HTTPException, status, Path, APIRouter
+from fastapi_limiter.depends import RateLimiter
+from pydantic import EmailStr
 from sqlalchemy.orm import Session
 
-from pydantic import EmailStr
-
-from src.database.db import get_db
-from src.schemas import ContactSchema, ContactSchemaResponse
-from src.database.models import User
-
 import src.repository.contacts as res_contacts
+from src.database.db import get_db
+from src.database.models import User
+from src.schemas import ContactSchema, ContactSchemaResponse
 from src.services.auth import auth_service
 
 router = APIRouter(prefix='/api/contacts', tags=["contacts"])
@@ -72,7 +70,8 @@ def get_contact_by_sur_name(sur_name: str = Path(min_length=3, max_length=100),
     return contact
 
 
-@router.post("/", response_model=ContactSchemaResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=ContactSchemaResponse, dependencies=[Depends(RateLimiter(times=2, seconds=5))],
+             status_code=status.HTTP_201_CREATED)
 def create_contact(body: ContactSchema, user: User = Depends(auth_service.get_current_user),
                    session: Session = Depends(get_db)):
     if res_contacts.get_contact_by_phone(phone=body.phone, user=user, session=session):
