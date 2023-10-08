@@ -1,11 +1,30 @@
+import redis.asyncio as redis
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi_limiter import FastAPILimiter
 from sqlalchemy import text
 from sqlalchemy.orm import Session
+from starlette.middleware.cors import CORSMiddleware
 
 from src.database.db import get_db
 from src.routes import contacts, auth
+from src.conf.config import config
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.on_event("startup")
+async def startup():
+    r = await redis.Redis(host=config.redis_host, port=config.redis_port,db=0)
+    await FastAPILimiter.init(r)
+
 
 app.include_router(auth.router)
 app.include_router(contacts.router)
