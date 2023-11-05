@@ -23,6 +23,16 @@ conf = ConnectionConfig(
 
 
 async def simple_send_mail(email: EmailStr, email_text:str) -> object:
+    """
+    The simple_send_mail function sends an email to the specified recipient.
+        Args:
+            email (str): The recipient's email address.
+            text (str): The body of the message to be sent.
+
+    :param email: EmailStr: Specify the email address to send the message to
+    :param email_text:str: Pass the text of the email to be sent
+    :return: The object, which is the message that was sent
+    """
     message = MessageSchema(
         subject="Fastapi-Mail test",
         recipients=[email],
@@ -35,6 +45,18 @@ async def simple_send_mail(email: EmailStr, email_text:str) -> object:
 
 
 async def send_email(email: EmailStr, username: str, host: str):
+
+    """
+    The send_email function sends an email to the user with a link to confirm their email address.
+        Args:
+            email (str): The user's email address.
+            username (str): The username of the user who is registering for an account.  This will be used in the message body of the confirmation message sent to them via FastMail.
+
+    :param email: EmailStr: Specify the email address of the recipient
+    :param username: str: Personalize the email message
+    :param host: str: Pass the hostname of your application to the template
+    :return: A coroutine object
+    """
     try:
         token_verification = auth_service.create_email_token({"sub": email})
         message = MessageSchema(

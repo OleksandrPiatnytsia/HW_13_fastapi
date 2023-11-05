@@ -34,11 +34,25 @@ app.include_router(users.router)
 
 @app.get("/")
 def read_root():
+    """
+    The read_root function returns a dictionary with the key &quot;message&quot; and value &quot;Application started&quot;.
+    This is used to test that the application has been deployed correctly.
+
+    :return: A dictionary with a single key-value pair
+    """
     return {"message": "Application started"}
 
 
 @app.get("/api/healthchecker")
 def healthchecker(session: Session = Depends(get_db)):
+    """
+    The healthchecker function is a simple function that checks if the database is configured correctly.
+    It does this by making a request to the database and checking if it returns any results.
+    If there are no results, then we know something went wrong with our connection.
+
+    :param session: Session: Pass the database session into the function
+    :return: A dictionary with a message
+    """
     try:
         # Make request
         result = session.execute(text("SELECT 1")).fetchone()
