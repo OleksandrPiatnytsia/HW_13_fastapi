@@ -11,7 +11,7 @@ class TestContactsRepository(unittest.TestCase):
     def setUp(self):
         self.session = Mock(spec=Session)
         self.user = User(
-            id=1, email="test@gmail.com", password="qwerty!234", confirmed=True
+            id=1, email="test@gmail.com", password="11223344", confirmed=True
         )
         self.contact = Contact(
             name="Borys",
