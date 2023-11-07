@@ -8,20 +8,20 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    sqlalchemy_database_url: str
-    secret_key: str
-    algorithm: str
-    mail_username: str
-    mail_password: str
-    mail_from: str
-    mail_port: int
-    mail_server: str
-    mail_sender_name: str
-    redis_host: str
-    redis_port: int
-    cloudinary_name: str
-    cloudinary_api_key: str
-    cloudinary_api_secret: str
+    sqlalchemy_database_url: str = "postgresql://user:password@localhost/dbname"
+    secret_key: str = "secret_key"
+    algorithm: str = "HS256"
+    mail_username: str = "username@test.com"
+    mail_password: str = "password"
+    mail_from: str = "username@test.com"
+    mail_port: int = 465
+    mail_server: str = "localhost"
+    mail_sender_name: str = "username"
+    redis_host: str = "localhost"
+    redis_port: int = 2032
+    cloudinary_name: str = "cloudinary_name"
+    cloudinary_api_key: str = "cloudinary_api_key"
+    cloudinary_api_secret: str = "cloudinary_api_secret"
 
     # model_config = ConfigDict(env_file=file_env, env_file_encoding="utf-8")
 
