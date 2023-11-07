@@ -20,10 +20,10 @@ app.add_middleware(
 )
 
 
-@app.on_event("startup")
-async def startup():
-    r = await redis.Redis(host=config.redis_host, port=config.redis_port, db=0)
-    await FastAPILimiter.init(r)
+# @app.on_event("startup")
+# async def startup():
+#     r = await redis.Redis(host=config.redis_host, port=config.redis_port, db=0)
+#     await FastAPILimiter.init(r)
 
 
 app.include_router(auth.router)

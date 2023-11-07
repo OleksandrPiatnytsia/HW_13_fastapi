@@ -15,8 +15,8 @@ router = APIRouter(prefix='/api/contacts', tags=["contacts"])
 birthday_router = APIRouter(prefix='/api/week_birthday', tags=["birthday"])
 
 
-@router.get("/", response_model=List[ContactSchemaResponse], dependencies=[Depends(RateLimiter(times=2, seconds=5))])
-# @router.get("/", response_model=List[ContactSchemaResponse])
+# @router.get("/", response_model=List[ContactSchemaResponse], dependencies=[Depends(RateLimiter(times=2, seconds=5))])
+@router.get("/", response_model=List[ContactSchemaResponse])
 def get_contacts(user: User = Depends(auth_service.get_current_user), session: Session = Depends(get_db)):
     """
     The get_contacts function returns a list of contacts for the current user.
@@ -124,8 +124,9 @@ def get_contact_by_sur_name(sur_name: str = Path(min_length=3, max_length=100),
     return contact
 
 
-@router.post("/", response_model=ContactSchemaResponse, dependencies=[Depends(RateLimiter(times=2, seconds=5))],
-             status_code=status.HTTP_201_CREATED)
+# @router.post("/", response_model=ContactSchemaResponse, dependencies=[Depends(RateLimiter(times=2, seconds=5))],
+#              status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=ContactSchemaResponse, status_code=status.HTTP_201_CREATED)
 def create_contact(body: ContactSchema, user: User = Depends(auth_service.get_current_user),
                    session: Session = Depends(get_db)):
     """
