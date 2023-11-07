@@ -5,9 +5,9 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 from starlette.middleware.cors import CORSMiddleware
 
+from src.conf.config import config
 from src.database.db import get_db
 from src.routes import contacts, auth, users
-from src.conf.config import config
 
 app = FastAPI()
 
@@ -22,7 +22,7 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def startup():
-    r = await redis.Redis(host=config.redis_host, port=config.redis_port,db=0)
+    r = await redis.Redis(host=config.redis_host, port=config.redis_port, db=0)
     await FastAPILimiter.init(r)
 
 

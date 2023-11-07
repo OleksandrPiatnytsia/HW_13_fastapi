@@ -16,6 +16,7 @@ birthday_router = APIRouter(prefix='/api/week_birthday', tags=["birthday"])
 
 
 @router.get("/", response_model=List[ContactSchemaResponse], dependencies=[Depends(RateLimiter(times=2, seconds=5))])
+# @router.get("/", response_model=List[ContactSchemaResponse])
 def get_contacts(user: User = Depends(auth_service.get_current_user), session: Session = Depends(get_db)):
     """
     The get_contacts function returns a list of contacts for the current user.
