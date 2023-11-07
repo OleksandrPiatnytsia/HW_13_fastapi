@@ -32,7 +32,6 @@ def test_get_contact(client, contact, token):
     assert data[0].get("id") == 1
 
 
-
 def test_repeat_create_contact(client, contact, token):
     response = client.post(
         "/api/contacts",
